@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  
+</head>
+
+<body class="courses-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+      <a href="index.html" class="logo d-flex align-items-center me-auto">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1 class="">Mentor</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html" class="">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="studentlist.html">Student List</a></li>
+          <li><a href="registration.html">Registration</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <a class="btn-getstarted" href="login.html">Login / Signup</a>
+
+    </div>
+  </header>
+
+  <div class="container-11">
+    <h1>Student Attendance System</h1>
+    <div class="controls">
+        <button id="prevDay">Previous Day</button>
+        <span id="currentDay">Day 1</span>
+        <button id="nextDay">Next Day</button>
+    </div>
+    <table id="attendanceTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="status">
+        <span id="totalPresent">Total Present: 0</span>
+        <span id="totalAbsent">Total Absent: 0</span>
+    </div>
+    <div class="monthly-status">
+        <h2 id="monthlySummaryTitle">Monthly Attendance Summary - August 2024</h2>
+        <table id="monthlyTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Days Present</th>
+                    <th>Days Absent</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <button id="downloadPDF">Download PDF</button>
+    </div>
+</div>
+
+<!-- Include jsPDF and autoTable plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let currentDay = 1;
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        const daysInMonth = 30; // Assuming 30 days in a month for simplicity
+        const students = [
+            { id: 1, name: 'M.kashif', photo: 'path/to/photo1.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 2, name: 'Laraib Owais', photo: 'path/to/photo2.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 3, name: 'Ehtisham Muddasir', photo: 'path/to/photo3.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 4, name: 'Zilly huma', photo: 'path/to/photo4.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 5, name: 'Kashan khan', photo: 'path/to/photo5.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 6, name: 'Omama nasir', photo: 'path/to/photo6.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 7, name: 'Malaika arora', photo: 'path/to/photo7.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 8, name: 'Sufiyan alvi', photo: 'path/to/photo8.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 9, name: 'Taha khan', photo: 'path/to/photo9.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 10, name: 'Syed.Siraj', photo: 'path/to/photo10.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 11, name: 'Hashir khan', photo: 'path/to/photo11.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 12, name: 'Muzzamil zehri', photo: 'path/to/photo12.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 13, name: 'Kiran sehar', photo: 'path/to/photo13.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 14, name: 'Maryam Navaid', photo: 'path/to/photo14.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 15, name: 'Ayesha Batool', photo: 'path/to/photo15.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 16, name: 'Enshaal', photo: 'path/to/photo16.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 17, name: 'Amas kidhwani', photo: 'path/to/photo17.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 18, name: 'Pervaiz khan', photo: 'path/to/photo18.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 19, name: 'Daniyal somoro', photo: 'path/to/photo19.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            { id: 20, name: 'Omaima kashif', photo: 'path/to/photo20.jpg', attendance: Array(daysInMonth).fill('Absent') },
+            // Add more students here...
+        ];
+
+        const tableBody = document.querySelector('#attendanceTable tbody');
+        const monthlyTableBody = document.querySelector('#monthlyTable tbody');
+        const totalPresent = document.getElementById('totalPresent');
+        const totalAbsent = document.getElementById('totalAbsent');
+        const currentDaySpan = document.getElementById('currentDay');
+        const monthlySummaryTitle = document.getElementById('monthlySummaryTitle');
+
+        const monthNames = ["January", "February", "March", "April", "May", "June", 
+                            "July", "August", "September", "October", "November", "December"];
+
+        function renderTable() {
+            tableBody.innerHTML = '';
+            let presentCount = 0;
+            let absentCount = 0;
+
+            students.forEach((student, index) => {
+                const status = student.attendance[currentDay - 1];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td><img src="${student.photo}" alt="${student.name}" class="student-photo" width="50" height="50"></td>
+                    <td>${student.name}</td>
+                    <td>${status}</td>
+                    <td>
+                        <button class="mark-present">Mark Present</button>
+                        <button class="mark-absent">Mark Absent</button>
+                        <button class="edit-student">Edit</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+
+                if (status === 'Present') {
+                    presentCount++;
+                } else {
+                    absentCount++;
+                }
+
+                row.querySelector('.edit-student').addEventListener('click', () => {
+                    const newName = prompt(`Enter new name for ${student.name}:`, student.name);
+                    const newPhoto = prompt(`Enter new photo URL for ${student.name}:`, student.photo);
+
+                    if (newName) {
+                        students[index].name = newName;
+                    }
+                    if (newPhoto) {
+                        students[index].photo = newPhoto;
+                    }
+
+                    renderTable();
+                    renderMonthlyTable(); // Update the monthly table after editing
+                });
+            });
+
+            totalPresent.textContent = `Total Present: ${presentCount}`;
+            totalAbsent.textContent = `Total Absent: ${absentCount}`;
+
+            document.querySelectorAll('.mark-present').forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    students[index].attendance[currentDay - 1] = 'Present';
+                    renderTable();
+                    renderMonthlyTable(); // Update the monthly table after marking attendance
+                });
+            });
+
+            document.querySelectorAll('.mark-absent').forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    students[index].attendance[currentDay - 1] = 'Absent';
+                    renderTable();
+                    renderMonthlyTable(); // Update the monthly table after marking attendance
+                });
+            });
+        }
+
+        function renderMonthlyTable() {
+            monthlyTableBody.innerHTML = '';
+            students.forEach(student => {
+                const daysPresent = student.attendance.filter(status => status === 'Present').length;
+                const daysAbsent = daysInMonth - daysPresent;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${daysPresent}</td>
+                    <td>${daysAbsent}</td>
+                `;
+                monthlyTableBody.appendChild(row);
+            });
+        }
+
+        function updateDay(increment) {
+            currentDay += increment;
+            if (currentDay > daysInMonth) {
+                currentDay = 1;
+                updateMonth(1);
+            } else if (currentDay < 1) {
+                currentDay = daysInMonth;
+                updateMonth(-1);
+            }
+            currentDaySpan.textContent = `Day ${currentDay}`;
+            renderTable();
+        }
+
+        function updateMonth(increment) {
+            currentMonth += increment;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            monthlySummaryTitle.textContent = `Monthly Attendance Summary - ${monthNames[currentMonth]} ${currentYear}`;
+        }
+
+        document.getElementById('prevDay').addEventListener('click', () => updateDay(-1));
+        document.getElementById('nextDay').addEventListener('click', () => updateDay(1));
+
+        document.getElementById('downloadPDF').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.text(monthlySummaryTitle.textContent, 10, 10);
+            doc.autoTable({
+                head: [['ID', 'Name', 'Days Present', 'Days Absent']],
+                body: students.map(student => [
+                    student.id,
+                    student.name,
+                    student.attendance.filter(status => status === 'Present').length,
+                    student.attendance.filter(status => status === 'Absent').length
+                ])
+            });
+
+            doc.save(`Attendance_Summary_${monthNames[currentMonth]}_${currentYear}.pdf`);
+        });
+
+        renderTable();
+        renderMonthlyTable();
+    });
+</script>
+
+
+  
+
+
+  <footer id="footer" class="footer position-relative">
+
+    <div class="container footer-top">
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6 footer-about">
+          <a href="index.html" class="logo d-flex align-items-center">
+            <span class="">Mentor</span>
+          </a>
+          <div class="footer-contact pt-3">
+            <p>A108 Adam Street</p>
+            <p>New York, NY 535022</p>
+            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
+            <p><strong>Email:</strong> <span>info@example.com</span></p>
+          </div>
+          <div class="social-links d-flex mt-4">
+            <a href=""><i class="bi bi-twitter"></i></a>
+            <a href=""><i class="bi bi-facebook"></i></a>
+            <a href=""><i class="bi bi-instagram"></i></a>
+            <a href=""><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Terms of service</a></li>
+            <li><a href="#">Privacy policy</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Our Services</h4>
+          <ul>
+            <li><a href="#">Web Design</a></li>
+            <li><a href="#">Web Development</a></li>
+            <li><a href="#">Product Management</a></li>
+            <li><a href="#">Marketing</a></li>
+            <li><a href="#">Graphic Design</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-4 col-md-12 footer-newsletter">
+          <h4>Our Newsletter</h4>
+          <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
+          <form action="forms/newsletter.php" method="post" class="php-email-form">
+            <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
+            <div class="loading">Loading</div>
+            <div class="error-message"></div>
+            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+ 
+
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
